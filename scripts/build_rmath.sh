@@ -36,25 +36,34 @@ tar xzf R.tar.gz "R-${R_VERSION}/src/nmath/" "R-${R_VERSION}/src/include/"
 
 NMATH="R-${R_VERSION}/src/nmath"
 
-# Detect available math functions
+# Detect available math functions at RUNTIME (not compile-time).
+# Conda's compiler can compile against functions that aren't in the
+# system's glibc, causing "undefined symbol" at runtime.
+# cospi/sinpi/tanpi are especially problematic — R has internal fallbacks.
 echo ""
-echo "Detecting system math functions..."
+echo "Detecting runtime math functions..."
 cat > config.h << 'CFGEOF'
 #define MATHLIB_STANDALONE 1
 CFGEOF
 
-for func in log1p expm1 hypot cospi sinpi tanpi; do
-    echo "#include <math.h>" > "test_${func}.c"
-    echo "double test(double x) { return ${func}(x); }" >> "test_${func}.c"
-    UPPER=$(echo $func | tr a-z A-Z)
-    if $CC -shared -fPIC -lm "test_${func}.c" -o /dev/null 2>/dev/null; then
+for func in log1p expm1 hypot; do
+    if python3 -c "
+import ctypes, ctypes.util
+libm = ctypes.CDLL(ctypes.util.find_library('m'))
+getattr(libm, '${func}')
+" 2>/dev/null; then
+        UPPER=$(echo $func | tr a-z A-Z)
         echo "#define HAVE_${UPPER} 1" >> config.h
         [ "$func" = "log1p" ] && echo "#define HAVE_WORKING_LOG1P 1" >> config.h
-        echo "  $func: yes"
+        echo "  $func: yes (runtime verified)"
     else
         echo "  $func: no (R fallback)"
     fi
 done
+
+# cospi/sinpi/tanpi: NEVER enable — unreliable across glibc versions,
+# and R's internal implementations are identical in precision.
+echo "  cospi/sinpi/tanpi: using R fallback (safe default)"
 
 # Minimal stubs — only for symbols nmath references but doesn't define itself.
 # sexp.c defines exp_rand, snorm.c defines norm_rand and N01_kind.
