@@ -1,0 +1,12 @@
+GNU General Public License v3.0
+
+Copyright (C) 2025 Ajay Kumar
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License.
+
+Original C implementation of beta-binomial and inverted beta-binomial
+tests by Thang V. Pham (t.pham@amsterdamumc.nl).
+
+Full license: https://www.gnu.org/licenses/gpl-3.0.html

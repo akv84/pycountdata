@@ -1,0 +1,6 @@
+include pyproject.toml
+include setup.py
+include README.md
+include LICENSE
+include requirements.txt
+recursive-include countdata/csrc *.c *.h

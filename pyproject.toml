@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=64", "wheel", "numpy>=1.20"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pycountdata"
+version = "1.0.0"
+description = "Beta-binomial and inverted beta-binomial tests for count data"
+readme = "README.md"
+license = {text = "GPL-3.0"}
+requires-python = ">=3.8"
+authors = [{name = "Ajay Kumar"}]
+keywords = ["bioinformatics", "RNA-seq", "beta-binomial", "count-data", "differential-expression"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: C",
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    "Operating System :: POSIX :: Linux",
+    "Operating System :: MacOS",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+    "Intended Audience :: Science/Research",
+]
+dependencies = ["numpy>=1.20"]
+
+[project.urls]
+Repository = "https://github.com/akv84/pycountdata"
+
+[tool.setuptools.packages.find]
+include = ["countdata*"]
